@@ -18,22 +18,48 @@
 #map17 = affine_map<()[s0, s1] -> (s1 * 16 + s0 floordiv 16 - ((s1 * 16 + s0 floordiv 16 + 192) floordiv 256) * 256 + 192)>
 #map18 = affine_map<()[s0, s1] -> (s1 * 16 + s0 floordiv 16 - ((s1 * 16 + s0 floordiv 16 + 224) floordiv 256) * 256 + 224)>
 #map19 = affine_map<()[s0, s1] -> ((s1 * 128 + s0 floordiv 2) mod 256)>
-#map20 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16)>
 #map21 = affine_map<()[s0] -> ((s0 mod 64) floordiv 16)>
 #map22 = affine_map<()[s0] -> ((s0 mod 64) floordiv 16 + 4)>
-#map23 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 16)>
-#map24 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 32)>
-#map25 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 48)>
-#map26 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 64)>
-#map27 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 80)>
-#map28 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 96)>
-#map29 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 112)>
+
+//MFMA loads. tidx % 16  + x16
+// range of 128 row per tidy
+// #map20 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16)>
+// #map23 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 16)>
+// #map24 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 32)>
+// #map25 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 48)>
+// #map26 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 64)>
+// #map27 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 80)>
+// #map28 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 96)>
+// #map29 = affine_map<()[s0, s1] -> (s0 + s1 * 128 - (s0 floordiv 16) * 16 + 112)>
+
+
+#map20 = affine_map<()[s0, s1] -> (s1 * 128 + 0)>
+#map23 = affine_map<()[s0, s1] -> (s1 * 128 +16)>
+#map24 = affine_map<()[s0, s1] -> (s1 * 128 +32)>
+#map25 = affine_map<()[s0, s1] -> (s1 * 128 +48)>
+#map26 = affine_map<()[s0, s1] -> (s1 * 128 +64)>
+#map27 = affine_map<()[s0, s1] -> (s1 * 128 +80)>
+#map28 = affine_map<()[s0, s1] -> (s1 * 128 +96)>
+#map29 = affine_map<()[s0, s1] -> (s1 * 128 +112)>
+
+
+
 #map30 = affine_map<()[s0] -> ((s0 mod 64) floordiv 16 + 8)>
 #map31 = affine_map<()[s0] -> ((s0 mod 64) floordiv 16 + 12)>
-#map32 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64)>
-#map33 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64 + 16)>
-#map34 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64 + 32)>
-#map35 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64 + 48)>
+
+//MFMA loads B
+
+// #map32 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64)>
+// #map33 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64 + 16)>
+// #map34 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64 + 32)>
+// #map35 = affine_map<()[s0] -> (s0 mod 16 + (s0 floordiv 64) * 64 + 48)>
+
+#map32 = affine_map<()[s0] -> ((s0 floordiv 64) * 64)>
+#map33 = affine_map<()[s0] -> ((s0 floordiv 64) * 64 + 16)>
+#map34 = affine_map<()[s0] -> ( (s0 floordiv 64) * 64 + 32)>
+#map35 = affine_map<()[s0] -> ( (s0 floordiv 64) * 64 + 48)>
+
+
 #map36 = affine_map<()[s0] -> (((s0 mod 64) floordiv 16) * 16)>
 #map37 = affine_map<()[s0] -> (((s0 mod 64) floordiv 16) * 16 + 64)>
 #map38 = affine_map<()[s0] -> (((s0 mod 64) floordiv 16) * 16 + 128)>
@@ -87,11 +113,11 @@ module attributes {transform.with_named_sequence} {
         %block_id_y = gpu.block_id  y upper_bound 64
         %thread_id_x = gpu.thread_id  x upper_bound 256
         %thread_id_y = gpu.thread_id  y upper_bound 2
-        %alloc = memref.alloc() : memref<147456xi8, #gpu.address_space<workgroup>>
-        %view = memref.view %alloc[%c135168][] : memref<147456xi8, #gpu.address_space<workgroup>> to memref<256x24xi8, #gpu.address_space<workgroup>>
-        %view_0 = memref.view %alloc[%c0][] : memref<147456xi8, #gpu.address_space<workgroup>> to memref<256x264xi8, #gpu.address_space<workgroup>>
-        %view_1 = memref.view %alloc[%c141312][] : memref<147456xi8, #gpu.address_space<workgroup>> to memref<256x24xi8, #gpu.address_space<workgroup>>
-        %view_2 = memref.view %alloc[%c67584][] : memref<147456xi8, #gpu.address_space<workgroup>> to memref<256x264xi8, #gpu.address_space<workgroup>>
+        %alloc = memref.alloc() : memref<151552xi8, #gpu.address_space<workgroup>>
+        %view = memref.view %alloc[%c135168][] : memref<151552xi8, #gpu.address_space<workgroup>> to memref<256x24xi8, #gpu.address_space<workgroup>>
+        %view_0 = memref.view %alloc[%c0][] : memref<151552xi8, #gpu.address_space<workgroup>> to memref<256x272xi8, #gpu.address_space<workgroup>>
+        %view_1 = memref.view %alloc[%c141312][] : memref<151552xi8, #gpu.address_space<workgroup>> to memref<256x24xi8, #gpu.address_space<workgroup>>
+        %view_2 = memref.view %alloc[%c67584][] : memref<151552xi8, #gpu.address_space<workgroup>> to memref<256x272xi8, #gpu.address_space<workgroup>>
         %0 = stream.binding.subspan %arg0[%c0] : !stream.binding -> memref<16384x8192xi8, strided<[8192, 1], offset: ?>>
         %1 = affine.apply #map()[%thread_id_x, %thread_id_y, %block_id_x]
         %2 = affine.apply #map1()[%thread_id_x]
@@ -179,31 +205,31 @@ module attributes {transform.with_named_sequence} {
         %80 = amdgpu.fat_raw_buffer_cast %reinterpret_cast_5 validBytes(%c2147483646_i32) cacheSwizzleStride(%c512_i14) : memref<?xi8, strided<[1], offset: ?>> to memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>
         %81 = vector.load %80[%79] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<8xi8>
         %82 = affine.apply #map11()[%thread_id_x, %thread_id_y]
-        vector.store %6, %view_2[%82, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %6, %view_2[%82, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %83 = affine.apply #map12()[%thread_id_x, %thread_id_y]
-        vector.store %10, %view_2[%83, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %10, %view_2[%83, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %84 = affine.apply #map13()[%thread_id_x, %thread_id_y]
-        vector.store %14, %view_2[%84, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %14, %view_2[%84, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %85 = affine.apply #map14()[%thread_id_x, %thread_id_y]
-        vector.store %18, %view_2[%85, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %18, %view_2[%85, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %86 = affine.apply #map15()[%thread_id_x, %thread_id_y]
-        vector.store %22, %view_2[%86, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %22, %view_2[%86, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %87 = affine.apply #map16()[%thread_id_x, %thread_id_y]
-        vector.store %26, %view_2[%87, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %26, %view_2[%87, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %88 = affine.apply #map17()[%thread_id_x, %thread_id_y]
-        vector.store %30, %view_2[%88, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %30, %view_2[%88, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %89 = affine.apply #map18()[%thread_id_x, %thread_id_y]
-        vector.store %34, %view_2[%89, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %34, %view_2[%89, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %90 = affine.apply #map19()[%thread_id_x, %thread_id_y]
         // vector.store %41, %view_1[%90, %37] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<8xi8>
-        vector.store %47, %view_0[%82, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        vector.store %51, %view_0[%83, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        vector.store %55, %view_0[%84, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        vector.store %59, %view_0[%85, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        vector.store %63, %view_0[%86, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        vector.store %67, %view_0[%87, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        vector.store %71, %view_0[%88, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        vector.store %75, %view_0[%89, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %47, %view_0[%82, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %51, %view_0[%83, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %55, %view_0[%84, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %59, %view_0[%85, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %63, %view_0[%86, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %67, %view_0[%87, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %71, %view_0[%88, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        vector.store %75, %view_0[%89, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         // vector.store %81, %view[%90, %37] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<8xi8>
         %91 = affine.apply #map20()[%thread_id_x, %thread_id_y]
         %92 = affine.apply #map21()[%thread_id_x]
@@ -408,68 +434,68 @@ module attributes {transform.with_named_sequence} {
           %941 = vector.load %46[%940] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
           %942 = arith.addi %49, %926 overflow<nsw> : index
           %943 = vector.load %46[%942] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
-          %944 = vector.load %view_0[%91, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %945 = vector.load %view_0[%91, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %944 = vector.load %view_0[%91, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %945 = vector.load %view_0[%91, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %946 = vector.bitcast %944 : vector<16xi8> to vector<32xf4E2M1FN>
-          %947 = vector.load %view_0[%94, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %947 = vector.load %view_0[%94, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %948 = vector.bitcast %945 : vector<16xi8> to vector<32xf4E2M1FN>
-          %949 = vector.load %view_0[%94, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %949 = vector.load %view_0[%94, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %950 = vector.bitcast %947 : vector<16xi8> to vector<32xf4E2M1FN>
-          %951 = vector.load %view_0[%95, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %951 = vector.load %view_0[%95, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %952 = vector.bitcast %949 : vector<16xi8> to vector<32xf4E2M1FN>
-          %953 = vector.load %view_0[%95, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %953 = vector.load %view_0[%95, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %954 = vector.bitcast %951 : vector<16xi8> to vector<32xf4E2M1FN>
-          %955 = vector.load %view_0[%96, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %955 = vector.load %view_0[%96, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %956 = vector.bitcast %953 : vector<16xi8> to vector<32xf4E2M1FN>
-          %957 = vector.load %view_0[%96, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %957 = vector.load %view_0[%96, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %958 = vector.bitcast %955 : vector<16xi8> to vector<32xf4E2M1FN>
-          %959 = vector.load %view_0[%97, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %959 = vector.load %view_0[%97, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %960 = vector.bitcast %957 : vector<16xi8> to vector<32xf4E2M1FN>
-          %961 = vector.load %view_0[%97, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %961 = vector.load %view_0[%97, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %962 = vector.bitcast %959 : vector<16xi8> to vector<32xf4E2M1FN>
-          %963 = vector.load %view_0[%98, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %963 = vector.load %view_0[%98, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %964 = vector.bitcast %961 : vector<16xi8> to vector<32xf4E2M1FN>
-          %965 = vector.load %view_0[%98, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %965 = vector.load %view_0[%98, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %966 = vector.bitcast %963 : vector<16xi8> to vector<32xf4E2M1FN>
-          %967 = vector.load %view_0[%99, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %967 = vector.load %view_0[%99, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %968 = vector.bitcast %965 : vector<16xi8> to vector<32xf4E2M1FN>
-          %969 = vector.load %view_0[%99, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %969 = vector.load %view_0[%99, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %970 = vector.bitcast %967 : vector<16xi8> to vector<32xf4E2M1FN>
-          %971 = vector.load %view_0[%100, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %971 = vector.load %view_0[%100, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %972 = vector.bitcast %969 : vector<16xi8> to vector<32xf4E2M1FN>
-          %973 = vector.load %view_0[%100, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %973 = vector.load %view_0[%100, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %974 = vector.bitcast %971 : vector<16xi8> to vector<32xf4E2M1FN>
-          %975 = vector.load %view_0[%91, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %975 = vector.load %view_0[%91, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %976 = vector.bitcast %973 : vector<16xi8> to vector<32xf4E2M1FN>
-          %977 = vector.load %view_0[%91, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %977 = vector.load %view_0[%91, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %978 = vector.bitcast %975 : vector<16xi8> to vector<32xf4E2M1FN>
-          %979 = vector.load %view_0[%94, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %979 = vector.load %view_0[%94, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %980 = vector.bitcast %977 : vector<16xi8> to vector<32xf4E2M1FN>
-          %981 = vector.load %view_0[%94, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %981 = vector.load %view_0[%94, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %982 = vector.bitcast %979 : vector<16xi8> to vector<32xf4E2M1FN>
-          %983 = vector.load %view_0[%95, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %983 = vector.load %view_0[%95, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %984 = vector.bitcast %981 : vector<16xi8> to vector<32xf4E2M1FN>
-          %985 = vector.load %view_0[%95, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %985 = vector.load %view_0[%95, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %986 = vector.bitcast %983 : vector<16xi8> to vector<32xf4E2M1FN>
-          %987 = vector.load %view_0[%96, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %987 = vector.load %view_0[%96, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %988 = vector.bitcast %985 : vector<16xi8> to vector<32xf4E2M1FN>
-          %989 = vector.load %view_0[%96, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %989 = vector.load %view_0[%96, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %990 = vector.bitcast %987 : vector<16xi8> to vector<32xf4E2M1FN>
-          %991 = vector.load %view_0[%97, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %991 = vector.load %view_0[%97, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %992 = vector.bitcast %989 : vector<16xi8> to vector<32xf4E2M1FN>
-          %993 = vector.load %view_0[%97, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %993 = vector.load %view_0[%97, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %994 = vector.bitcast %991 : vector<16xi8> to vector<32xf4E2M1FN>
-          %995 = vector.load %view_0[%98, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %995 = vector.load %view_0[%98, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %996 = vector.bitcast %993 : vector<16xi8> to vector<32xf4E2M1FN>
-          %997 = vector.load %view_0[%98, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %997 = vector.load %view_0[%98, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %998 = vector.bitcast %995 : vector<16xi8> to vector<32xf4E2M1FN>
-          %999 = vector.load %view_0[%99, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %999 = vector.load %view_0[%99, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1000 = vector.bitcast %997 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1001 = vector.load %view_0[%99, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1001 = vector.load %view_0[%99, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1002 = vector.bitcast %999 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1003 = vector.load %view_0[%100, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1003 = vector.load %view_0[%100, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1004 = vector.bitcast %1001 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1005 = vector.load %view_0[%100, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1005 = vector.load %view_0[%100, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1006 = vector.bitcast %1003 : vector<16xi8> to vector<32xf4E2M1FN>
           %1007 = arith.addi %16, %926 overflow<nsw> : index
           %1008 = vector.load %5[%1007] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
@@ -488,36 +514,36 @@ module attributes {transform.with_named_sequence} {
           %1021 = vector.load %5[%1020] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
           %1022 = arith.addi %24, %926 overflow<nsw> : index
           %1023 = vector.load %5[%1022] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
-          %1024 = vector.load %view_2[%103, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %1025 = vector.load %view_2[%103, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1024 = vector.load %view_2[%103, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1025 = vector.load %view_2[%103, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1026 = vector.bitcast %1024 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1027 = vector.load %view_2[%104, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1027 = vector.load %view_2[%104, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1028 = vector.bitcast %1025 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1029 = vector.load %view_2[%104, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1029 = vector.load %view_2[%104, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1030 = vector.bitcast %1027 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1031 = vector.load %view_2[%105, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1031 = vector.load %view_2[%105, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1032 = vector.bitcast %1029 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1033 = vector.load %view_2[%105, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1033 = vector.load %view_2[%105, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1034 = vector.bitcast %1031 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1035 = vector.load %view_2[%106, %107] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1035 = vector.load %view_2[%106, %107] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1036 = vector.bitcast %1033 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1037 = vector.load %view_2[%106, %108] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1037 = vector.load %view_2[%106, %108] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1038 = vector.bitcast %1035 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1039 = vector.load %view_2[%103, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1039 = vector.load %view_2[%103, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1040 = vector.bitcast %1037 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1041 = vector.load %view_2[%103, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1041 = vector.load %view_2[%103, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1042 = vector.bitcast %1039 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1043 = vector.load %view_2[%104, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1043 = vector.load %view_2[%104, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1044 = vector.bitcast %1041 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1045 = vector.load %view_2[%104, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1045 = vector.load %view_2[%104, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1046 = vector.bitcast %1043 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1047 = vector.load %view_2[%105, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1047 = vector.load %view_2[%105, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1048 = vector.bitcast %1045 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1049 = vector.load %view_2[%105, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1049 = vector.load %view_2[%105, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1050 = vector.bitcast %1047 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1051 = vector.load %view_2[%106, %109] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1051 = vector.load %view_2[%106, %109] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1052 = vector.bitcast %1049 : vector<16xi8> to vector<32xf4E2M1FN>
-          %1053 = vector.load %view_2[%106, %110] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %1053 = vector.load %view_2[%106, %110] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           %1054 = vector.bitcast %1051 : vector<16xi8> to vector<32xf4E2M1FN>
           %1055 = vector.bitcast %1053 : vector<16xi8> to vector<32xf4E2M1FN>
           %1056 = vector.extractelement %897[%c0 : index] : vector<1xf8E8M0FNU>
@@ -699,22 +725,22 @@ module attributes {transform.with_named_sequence} {
           amdgpu.lds_barrier
         //   vector.store %893, %view_1[%90, %37] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<8xi8>
         //   vector.store %828, %view[%90, %37] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<8xi8>
-          vector.store %1021, %view_2[%82, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %1015, %view_2[%83, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %1013, %view_2[%89, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %1023, %view_2[%87, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %1019, %view_2[%88, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %1008, %view_2[%85, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %1017, %view_2[%84, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %1011, %view_2[%86, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %928, %view_0[%85, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %943, %view_0[%83, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %937, %view_0[%88, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %935, %view_0[%86, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %941, %view_0[%82, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %931, %view_0[%84, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %933, %view_0[%89, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          vector.store %939, %view_0[%87, %2] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1021, %view_2[%82, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1015, %view_2[%83, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1013, %view_2[%89, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1023, %view_2[%87, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1019, %view_2[%88, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1008, %view_2[%85, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1017, %view_2[%84, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %1011, %view_2[%86, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %928, %view_0[%85, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %943, %view_0[%83, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %937, %view_0[%88, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %935, %view_0[%86, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %941, %view_0[%82, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %931, %view_0[%84, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %933, %view_0[%89, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %939, %view_0[%87, %2] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           scf.yield %1149, %1153, %1157, %1161, %1165, %1169, %1173, %1177, %1181, %1183, %1185, %1187, %1189, %1191, %1193, %1195, %1199, %1201, %1203, %1205, %1207, %1209, %1211, %1213, %1217, %1219, %1221, %1223, %1225, %1227, %1229, %1231 : vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>
         }
         amdgpu.lds_barrier
@@ -763,41 +789,41 @@ module attributes {transform.with_named_sequence} {
         %154 = vector.load %view[%151, %117] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<1xi8>
         %155 = vector.load %view[%151, %119] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<1xi8>
         %156 = affine.apply #map36()[%thread_id_x]
-        %157 = vector.load %view_0[%112, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %157 = vector.load %view_0[%112, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %158 = affine.apply #map37()[%thread_id_x]
-        %159 = vector.load %view_0[%112, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %159 = vector.load %view_0[%112, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %160 = affine.apply #map38()[%thread_id_x]
-        %161 = vector.load %view_0[%112, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %161 = vector.load %view_0[%112, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %162 = affine.apply #map39()[%thread_id_x]
-        %163 = vector.load %view_0[%112, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %164 = vector.load %view_0[%121, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %165 = vector.load %view_0[%121, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %166 = vector.load %view_0[%121, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %167 = vector.load %view_0[%121, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %168 = vector.load %view_0[%126, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %169 = vector.load %view_0[%126, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %170 = vector.load %view_0[%126, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %171 = vector.load %view_0[%126, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %172 = vector.load %view_0[%131, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %173 = vector.load %view_0[%131, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %174 = vector.load %view_0[%131, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %175 = vector.load %view_0[%131, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %176 = vector.load %view_0[%136, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %177 = vector.load %view_0[%136, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %178 = vector.load %view_0[%136, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %179 = vector.load %view_0[%136, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %180 = vector.load %view_0[%141, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %181 = vector.load %view_0[%141, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %182 = vector.load %view_0[%141, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %183 = vector.load %view_0[%141, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %184 = vector.load %view_0[%146, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %185 = vector.load %view_0[%146, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %186 = vector.load %view_0[%146, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %187 = vector.load %view_0[%146, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %188 = vector.load %view_0[%151, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %189 = vector.load %view_0[%151, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %190 = vector.load %view_0[%151, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %191 = vector.load %view_0[%151, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %163 = vector.load %view_0[%112, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %164 = vector.load %view_0[%121, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %165 = vector.load %view_0[%121, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %166 = vector.load %view_0[%121, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %167 = vector.load %view_0[%121, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %168 = vector.load %view_0[%126, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %169 = vector.load %view_0[%126, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %170 = vector.load %view_0[%126, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %171 = vector.load %view_0[%126, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %172 = vector.load %view_0[%131, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %173 = vector.load %view_0[%131, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %174 = vector.load %view_0[%131, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %175 = vector.load %view_0[%131, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %176 = vector.load %view_0[%136, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %177 = vector.load %view_0[%136, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %178 = vector.load %view_0[%136, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %179 = vector.load %view_0[%136, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %180 = vector.load %view_0[%141, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %181 = vector.load %view_0[%141, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %182 = vector.load %view_0[%141, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %183 = vector.load %view_0[%141, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %184 = vector.load %view_0[%146, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %185 = vector.load %view_0[%146, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %186 = vector.load %view_0[%146, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %187 = vector.load %view_0[%146, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %188 = vector.load %view_0[%151, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %189 = vector.load %view_0[%151, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %190 = vector.load %view_0[%151, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %191 = vector.load %view_0[%151, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %192 = affine.apply #map32()[%thread_id_x]
         %193 = vector.load %view_1[%192, %113] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<1xi8>
         %194 = vector.load %view_1[%192, %115] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<1xi8>
@@ -818,22 +844,22 @@ module attributes {transform.with_named_sequence} {
         %209 = vector.load %view_1[%207, %115] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<1xi8>
         %210 = vector.load %view_1[%207, %117] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<1xi8>
         %211 = vector.load %view_1[%207, %119] : memref<256x24xi8, #gpu.address_space<workgroup>>, vector<1xi8>
-        %212 = vector.load %view_2[%192, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %213 = vector.load %view_2[%192, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %214 = vector.load %view_2[%192, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %215 = vector.load %view_2[%192, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %216 = vector.load %view_2[%197, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %217 = vector.load %view_2[%197, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %218 = vector.load %view_2[%197, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %219 = vector.load %view_2[%197, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %220 = vector.load %view_2[%202, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %221 = vector.load %view_2[%202, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %222 = vector.load %view_2[%202, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %223 = vector.load %view_2[%202, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %224 = vector.load %view_2[%207, %156] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %225 = vector.load %view_2[%207, %158] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %226 = vector.load %view_2[%207, %160] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-        %227 = vector.load %view_2[%207, %162] : memref<256x264xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %212 = vector.load %view_2[%192, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %213 = vector.load %view_2[%192, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %214 = vector.load %view_2[%192, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %215 = vector.load %view_2[%192, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %216 = vector.load %view_2[%197, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %217 = vector.load %view_2[%197, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %218 = vector.load %view_2[%197, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %219 = vector.load %view_2[%197, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %220 = vector.load %view_2[%202, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %221 = vector.load %view_2[%202, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %222 = vector.load %view_2[%202, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %223 = vector.load %view_2[%202, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %224 = vector.load %view_2[%207, %156] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %225 = vector.load %view_2[%207, %158] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %226 = vector.load %view_2[%207, %160] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+        %227 = vector.load %view_2[%207, %162] : memref<256x272xi8, #gpu.address_space<workgroup>>, vector<16xi8>
         %228 = vector.bitcast %212 : vector<16xi8> to vector<32xf4E2M1FN>
         %229 = vector.bitcast %213 : vector<16xi8> to vector<32xf4E2M1FN>
         %230 = vector.bitcast %214 : vector<16xi8> to vector<32xf4E2M1FN>

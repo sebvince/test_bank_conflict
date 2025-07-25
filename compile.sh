@@ -2,10 +2,13 @@ iree-compile kernel.mlir \
     --iree-hip-target=gfx950 \
     --iree-hal-target-backends=rocm \
     --mlir-disable-threading \
+    --iree-hal-dump-executable-files-to . \
     --iree-codegen-enable-default-tuning-specs=true \
     -o tmp/kernel.vmfb
 
-iree-benchmark-module \
+PROFILER="rocprofv3 --att --att-perfcounter-ctrl 3 --att-perfcounters "SQ_LDS_BANK_CONFLICT" --"
+PROFILER=
+$PROFILER iree-benchmark-module \
   --module=tmp/kernel.vmfb \
   --device=hip \
   --function=matmul \

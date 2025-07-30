@@ -3,6 +3,7 @@ from wave_lang.kernel.wave.utils.torch_utils import (
     device_randn,
     device_randint,
     device_tensor,
+    device_full,
     device_zeros,
 )
 import numpy as np
@@ -55,8 +56,10 @@ def generate_gemm_afp4wfp4_inputs(shape):
     w = w_low | w_high << 4
     w = w.T
     # Scale of 1.0 in e8m0, bias 127.
-    x_scales = device_randint(124, 128, (K // SCALE_GROUP_SIZE, M), dtype=torch.uint8)
-    w_scales = device_randint(124, 128, (K // SCALE_GROUP_SIZE, N), dtype=torch.uint8)
+    # x_scales = device_randint(124, 128, (K // SCALE_GROUP_SIZE, M), dtype=torch.uint8)
+    # w_scales = device_randint(124, 128, (K // SCALE_GROUP_SIZE, N), dtype=torch.uint8)
+    x_scales = device_full((K // SCALE_GROUP_SIZE, M),fill_value=127, dtype=torch.uint8)
+    w_scales = device_full((K // SCALE_GROUP_SIZE, N),fill_value=127, dtype=torch.uint8)
     x_scales = x_scales.T.contiguous()
     w_scales = w_scales.T.contiguous()
 
@@ -92,12 +95,14 @@ with open("kernel_f32.mlir", "rb") as f:
     options = WaveCompileOptions(
         backend="rocm",
         target="gfx950",
-        dump_intermediates = True,
+        dump_intermediates="./inter",
     )
     try:
         vmfb = compile_to_vmfb(asm, options)
-    except:
+    except e:
+        print(e)
         print("Compile Error !!!")
+        
      
     def loader(device):
         vm_instance = device.vm_instance
@@ -107,6 +112,6 @@ with open("kernel_f32.mlir", "rb") as f:
     kernel_inputs = [x, x_scales ,w_t, w_scales,out]
     kernel_outputs = [out]
     res = launchable(*kernel_inputs, outputs=kernel_outputs)
-    print(res)
+    print("Output :", res)
     torch.testing.assert_close(torch_out, res)
 

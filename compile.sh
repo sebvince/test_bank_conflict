@@ -1,4 +1,4 @@
-iree-compile kernel.mlir \
+iree-compile kernel_f32.mlir \
     --iree-hip-target=gfx950 \
     --iree-hal-target-backends=rocm \
     --mlir-disable-threading \
@@ -13,12 +13,12 @@ PROFILER="rocprofv3 --pmc LDSBankConflict --output-format csv --stats --output-f
 $PROFILER iree-benchmark-module \
   --module=tmp/kernel.vmfb \
   --device=hip \
-  --function=matmul \
+  --function=isolated_benchmark \
   --input=16384x8192xi8=@a.bin \
   --input=16384x512xi8=@a_scale.bin \
   --input=16384x8192xi8=@b.bin \
   --input=16384x512xi8=@b_scale.bin \
-  --input=16384x16384xbf16=@out.bin
+  --input=16384x16384xf32=@out.bin
 
 
 # cat res.csv_counter_collection.csv 

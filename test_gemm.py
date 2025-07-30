@@ -5,8 +5,12 @@ from wave_lang.kernel.wave.utils.torch_utils import (
     device_tensor,
     device_zeros,
 )
+import numpy as np
 import iree.runtime as rt
 from wave_lang.runtime.launch import Launchable
+from wave_lang.kernel.wave.compile import WaveCompileOptions, wave_compile
+from wave_lang.kernel.wave.utils.compile_utils import compile_to_vmfb
+
 
 def mxfp4_to_f32(x):
     # 2 because we pack fp4 in uint8.
@@ -81,26 +85,28 @@ out = device_zeros(x.shape[0], w.shape[1], dtype=torch.float32)
 w_t = w.T.contiguous()
 
 torch_out = torchScaledGemmMXFP4(x, w, x_scales, w_scales)
-print(torch_out)
+# print(torch_out)
 
+with open("kernel_f32.mlir", "rb") as f:
+    asm = f.read()
+    options = WaveCompileOptions(
+        backend="rocm",
+        target="gfx950",
+        dump_intermediates = True,
+    )
+    try:
+        vmfb = compile_to_vmfb(asm, options)
+    except:
+        print("Compile Error !!!")
+     
+    def loader(device):
+        vm_instance = device.vm_instance
+        return rt.VmModule.copy_buffer(vm_instance, vmfb)
 
-import numpy as np
-import iree.runtime as ireert
-
-# Load the compiled module
-with open("tmp/kernel.vmfb", "rb") as f:
-    vmfb = f.read()
-
-
-      
-def loader(device):
-    vm_instance = device.vm_instance
-    return rt.VmModule.copy_buffer(vm_instance, vmfb)
-
-launchable = Launchable.from_vm_module(loader, entry_point="isolated_benchmark")
-kernel_inputs = [x, x_scales ,w_t, w_scales,out]
-kernel_outputs = [out]
-res = launchable(*kernel_inputs, outputs=kernel_outputs)
-print(res)
-torch.testing.assert_close(torch_out, res)
+    launchable = Launchable.from_vm_module(loader, entry_point="isolated_benchmark")
+    kernel_inputs = [x, x_scales ,w_t, w_scales,out]
+    kernel_outputs = [out]
+    res = launchable(*kernel_inputs, outputs=kernel_outputs)
+    print(res)
+    torch.testing.assert_close(torch_out, res)
 

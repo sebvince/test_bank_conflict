@@ -59,6 +59,8 @@ module attributes {transform.with_named_sequence} {
         %c1 = arith.constant 1 : index
         %c64 = arith.constant 64 : index
         %c0 = arith.constant 0 : index
+        %c8 = arith.constant 8 : index
+        %c16 = arith.constant 16 : index
         %cst_0 = arith.constant dense<0.000000e+00> : vector<4xf32>
         %block_id_x = gpu.block_id  x upper_bound 64
         %block_id_y = gpu.block_id  y upper_bound 64
@@ -108,49 +110,169 @@ module attributes {transform.with_named_sequence} {
         %37 = affine.apply #map21()[%thread_id_x]
         %38:32 = scf.for %arg5 = %c0 to %c64 step %c1 iter_args(%arg6 = %cst_0, %arg7 = %cst_0, %arg8 = %cst_0, %arg9 = %cst_0, %arg10 = %cst_0, %arg11 = %cst_0, %arg12 = %cst_0, %arg13 = %cst_0, %arg14 = %cst_0, %arg15 = %cst_0, %arg16 = %cst_0, %arg17 = %cst_0, %arg18 = %cst_0, %arg19 = %cst_0, %arg20 = %cst_0, %arg21 = %cst_0, %arg22 = %cst_0, %arg23 = %cst_0, %arg24 = %cst_0, %arg25 = %cst_0, %arg26 = %cst_0, %arg27 = %cst_0, %arg28 = %cst_0, %arg29 = %cst_0, %arg30 = %cst_0, %arg31 = %cst_0, %arg32 = %cst_0, %arg33 = %cst_0, %arg34 = %cst_0, %arg35 = %cst_0, %arg36 = %cst_0, %arg37 = %cst_0) -> (vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>) {
           amdgpu.lds_barrier
-          %341 = affine.apply #map22()[%arg5, %thread_id_x]
-          %342 = arith.addi %4, %341 overflow<nsw> : index
+
+          //((s1 * 4 + s0 floordiv 64) mod 32) * 8 : warpId * 8 as 8 rows per warp
+          //%3,%7,%10,%13 are row index in LDS
+
+
+          //Apply inverse swizzling
+          %read_col = affine.apply affine_map<()[s0,s1] -> ((s1 mod 8) + s0 *8)>()[%arg5, %thread_id_x]
+          %read_row_a_0_mod_8 = arith.remui %2, %c8 : index
+          %read_row_a_1_mod_8 = arith.remui %6, %c8 : index
+          %read_row_a_2_mod_8 = arith.remui %9, %c8 : index
+          %read_row_a_3_mod_8 = arith.remui %12, %c8 : index
+          %read_row_b_0_mod_8 = arith.remui %15, %c8 : index
+          %read_row_b_1_mod_8 = arith.remui %18, %c8 : index
+          %read_row_b_2_mod_8 = arith.remui %20, %c8 : index
+          %read_row_b_3_mod_8 = arith.remui %22, %c8 : index
+
+          %col_a_swizzle_0 = arith.xori %read_row_a_0_mod_8, %read_col : index
+          %col_a_swizzle_1 = arith.xori %read_row_a_1_mod_8, %read_col : index
+          %col_a_swizzle_2 = arith.xori %read_row_a_2_mod_8, %read_col : index
+          %col_a_swizzle_3 = arith.xori %read_row_a_3_mod_8, %read_col : index
+          %col_b_swizzle_0 = arith.xori %read_row_b_0_mod_8, %read_col : index
+          %col_b_swizzle_1 = arith.xori %read_row_b_1_mod_8, %read_col : index
+          %col_b_swizzle_2 = arith.xori %read_row_b_2_mod_8, %read_col : index
+          %col_b_swizzle_3 = arith.xori %read_row_b_3_mod_8, %read_col : index
+
+          %col_a_swizzle_0_b = arith.muli %col_a_swizzle_0, %c16 : index
+          %col_a_swizzle_1_b = arith.muli %col_a_swizzle_1, %c16 : index 
+          %col_a_swizzle_2_b = arith.muli %col_a_swizzle_2, %c16 : index
+          %col_a_swizzle_3_b = arith.muli %col_a_swizzle_3, %c16 : index
+          %col_b_swizzle_0_b = arith.muli %col_b_swizzle_0, %c16 : index
+          %col_b_swizzle_1_b = arith.muli %col_b_swizzle_1, %c16 : index
+          %col_b_swizzle_2_b = arith.muli %col_b_swizzle_2, %c16 : index
+          %col_b_swizzle_3_b = arith.muli %col_b_swizzle_3, %c16 : index
+
+
+          %342 = arith.addi %4,  %col_a_swizzle_0_b overflow<nsw> : index
+          %343 = arith.addi %8,  %col_a_swizzle_1_b overflow<nsw> : index
+          %344 = arith.addi %11, %col_a_swizzle_2_b overflow<nsw> : index
+          %345 = arith.addi %14, %col_a_swizzle_3_b overflow<nsw> : index
+          %346 = arith.addi %16, %col_b_swizzle_0_b overflow<nsw> : index
+          %347 = arith.addi %19, %col_b_swizzle_1_b overflow<nsw> : index
+          %348 = arith.addi %21, %col_b_swizzle_2_b overflow<nsw> : index
+          %349 = arith.addi %23, %col_b_swizzle_3_b overflow<nsw> : index
+
           amdgpu.gather_to_lds %5[%342], %alloc_1[%3] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
-          %343 = arith.addi %8, %341 overflow<nsw> : index
           amdgpu.gather_to_lds %5[%343], %alloc_1[%7] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
-          %344 = arith.addi %11, %341 overflow<nsw> : index
           amdgpu.gather_to_lds %5[%344], %alloc_1[%10] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
-          %345 = arith.addi %14, %341 overflow<nsw> : index
           amdgpu.gather_to_lds %5[%345], %alloc_1[%13] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
-          %346 = arith.addi %16, %341 overflow<nsw> : index
           amdgpu.gather_to_lds %17[%346], %alloc[%3] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
-          %347 = arith.addi %19, %341 overflow<nsw> : index
           amdgpu.gather_to_lds %17[%347], %alloc[%7] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
-          %348 = arith.addi %21, %341 overflow<nsw> : index
           amdgpu.gather_to_lds %17[%348], %alloc[%10] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
-          %349 = arith.addi %23, %341 overflow<nsw> : index
           amdgpu.gather_to_lds %17[%349], %alloc[%13] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+
           rocdl.s.waitcnt 16368
+
+          //Apply Swizzling on LDS reads . Row %8 ^ col
+
+          //col back to elements (not bytes)
+          %c4 = arith.constant 4 : index
+          %col_0 = arith.shrui %25, %c4 : index
+          %col_1 = arith.shrui %26, %c4 : index
+
+          //mod8 on rows
+          %row_a_8_0 = arith.remui %24, %c8 : index
+          %row_a_8_1 = arith.remui %27, %c8 : index
+          %row_a_8_2 = arith.remui %28, %c8 : index
+          %row_a_8_3 = arith.remui %29, %c8 : index
+          %row_a_8_4 = arith.remui %30, %c8 : index
+          %row_a_8_5 = arith.remui %31, %c8 : index
+          %row_a_8_6 = arith.remui %32, %c8 : index
+          %row_a_8_7 = arith.remui %33, %c8 : index
+          
+          //XOR
+          %col_a_0_0 = arith.xori %row_a_8_0, %col_0 : index
+          %col_a_0_1 = arith.xori %row_a_8_0, %col_1 : index
+          %col_a_1_0 = arith.xori %row_a_8_1, %col_0 : index
+          %col_a_1_1 = arith.xori %row_a_8_1, %col_1 : index
+          %col_a_2_0 = arith.xori %row_a_8_2, %col_0 : index
+          %col_a_2_1 = arith.xori %row_a_8_2, %col_1 : index
+          %col_a_3_0 = arith.xori %row_a_8_3, %col_0 : index
+          %col_a_3_1 = arith.xori %row_a_8_3, %col_1 : index
+          %col_a_4_0 = arith.xori %row_a_8_4, %col_0 : index
+          %col_a_4_1 = arith.xori %row_a_8_4, %col_1 : index
+          %col_a_5_0 = arith.xori %row_a_8_5, %col_0 : index
+          %col_a_5_1 = arith.xori %row_a_8_5, %col_1 : index
+          %col_a_6_0 = arith.xori %row_a_8_6, %col_0 : index
+          %col_a_6_1 = arith.xori %row_a_8_6, %col_1 : index
+          %col_a_7_0 = arith.xori %row_a_8_7, %col_0 : index
+          %col_a_7_1 = arith.xori %row_a_8_7, %col_1 : index
+
+          //offset in bytes
+          %col_a_0_0_b = arith.muli %col_a_0_0, %c16 : index
+          %col_a_0_1_b = arith.muli %col_a_0_1, %c16 : index
+          %col_a_1_0_b = arith.muli %col_a_1_0, %c16 : index
+          %col_a_1_1_b = arith.muli %col_a_1_1, %c16 : index
+          %col_a_2_0_b = arith.muli %col_a_2_0, %c16 : index
+          %col_a_2_1_b = arith.muli %col_a_2_1, %c16 : index
+          %col_a_3_0_b = arith.muli %col_a_3_0, %c16 : index
+          %col_a_3_1_b = arith.muli %col_a_3_1, %c16 : index
+          %col_a_4_0_b = arith.muli %col_a_4_0, %c16 : index
+          %col_a_4_1_b = arith.muli %col_a_4_1, %c16 : index
+          %col_a_5_0_b = arith.muli %col_a_5_0, %c16 : index
+          %col_a_5_1_b = arith.muli %col_a_5_1, %c16 : index
+          %col_a_6_0_b = arith.muli %col_a_6_0, %c16 : index
+          %col_a_6_1_b = arith.muli %col_a_6_1, %c16 : index
+          %col_a_7_0_b = arith.muli %col_a_7_0, %c16 : index
+          %col_a_7_1_b = arith.muli %col_a_7_1, %c16 : index
+
           amdgpu.lds_barrier
-          %350 = vector.load %alloc[%24, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %351 = vector.load %alloc[%24, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %352 = vector.load %alloc[%27, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %353 = vector.load %alloc[%27, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %354 = vector.load %alloc[%28, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %355 = vector.load %alloc[%28, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %356 = vector.load %alloc[%29, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %357 = vector.load %alloc[%29, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %358 = vector.load %alloc[%30, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %359 = vector.load %alloc[%30, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %360 = vector.load %alloc[%31, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %361 = vector.load %alloc[%31, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %362 = vector.load %alloc[%32, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %363 = vector.load %alloc[%32, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %364 = vector.load %alloc[%33, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %365 = vector.load %alloc[%33, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %366 = vector.load %alloc_1[%34, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %367 = vector.load %alloc_1[%34, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %368 = vector.load %alloc_1[%35, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %369 = vector.load %alloc_1[%35, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %370 = vector.load %alloc_1[%36, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %371 = vector.load %alloc_1[%36, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %372 = vector.load %alloc_1[%37, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %373 = vector.load %alloc_1[%37, %26] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %350 = vector.load %alloc[%24, %col_a_0_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %351 = vector.load %alloc[%24, %col_a_0_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %352 = vector.load %alloc[%27, %col_a_1_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %353 = vector.load %alloc[%27, %col_a_1_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %354 = vector.load %alloc[%28, %col_a_2_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %355 = vector.load %alloc[%28, %col_a_2_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %356 = vector.load %alloc[%29, %col_a_3_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %357 = vector.load %alloc[%29, %col_a_3_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %358 = vector.load %alloc[%30, %col_a_4_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %359 = vector.load %alloc[%30, %col_a_4_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %360 = vector.load %alloc[%31, %col_a_5_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %361 = vector.load %alloc[%31, %col_a_5_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %362 = vector.load %alloc[%32, %col_a_6_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %363 = vector.load %alloc[%32, %col_a_6_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %364 = vector.load %alloc[%33, %col_a_7_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %365 = vector.load %alloc[%33, %col_a_7_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+
+ //mod8 on rows
+          %row_b_8_0 = arith.remui %34, %c8 : index
+          %row_b_8_1 = arith.remui %35, %c8 : index
+          %row_b_8_2 = arith.remui %36, %c8 : index
+          %row_b_8_3 = arith.remui %37, %c8 : index
+          
+          //XOR
+          %col_b_0_0 = arith.xori %row_b_8_0, %col_0 : index
+          %col_b_0_1 = arith.xori %row_b_8_0, %col_1 : index
+          %col_b_1_0 = arith.xori %row_b_8_1, %col_0 : index
+          %col_b_1_1 = arith.xori %row_b_8_1, %col_1 : index
+          %col_b_2_0 = arith.xori %row_b_8_2, %col_0 : index
+          %col_b_2_1 = arith.xori %row_b_8_2, %col_1 : index
+          %col_b_3_0 = arith.xori %row_b_8_3, %col_0 : index
+          %col_b_3_1 = arith.xori %row_b_8_3, %col_1 : index
+          
+
+          //offset in bytes
+          %col_b_0_0_b = arith.muli %col_b_0_0, %c16 : index
+          %col_b_0_1_b = arith.muli %col_b_0_1, %c16 : index
+          %col_b_1_0_b = arith.muli %col_b_1_0, %c16 : index
+          %col_b_1_1_b = arith.muli %col_b_1_1, %c16 : index
+          %col_b_2_0_b = arith.muli %col_b_2_0, %c16 : index
+          %col_b_2_1_b = arith.muli %col_b_2_1, %c16 : index
+          %col_b_3_0_b = arith.muli %col_b_3_0, %c16 : index
+          %col_b_3_1_b = arith.muli %col_b_3_1, %c16 : index
+
+
+          %366 = vector.load %alloc_1[%34, %col_b_0_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %367 = vector.load %alloc_1[%34, %col_b_0_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %368 = vector.load %alloc_1[%35, %col_b_1_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %369 = vector.load %alloc_1[%35, %col_b_1_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %370 = vector.load %alloc_1[%36, %col_b_2_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %371 = vector.load %alloc_1[%36, %col_b_2_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %372 = vector.load %alloc_1[%37, %col_b_3_0_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          %373 = vector.load %alloc_1[%37, %col_b_3_1_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+
           %374 = vector.bitcast %366 : vector<16xi8> to vector<32xf4E2M1FN>
           %375 = vector.bitcast %367 : vector<16xi8> to vector<32xf4E2M1FN>
           %376 = vector.bitcast %368 : vector<16xi8> to vector<32xf4E2M1FN>

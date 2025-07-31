@@ -119,10 +119,32 @@ module attributes {transform.with_named_sequence} {
         %37 = affine.apply #map21()[%thread_id_x]
         %38 = affine.apply #map22()[%thread_id_x]
         %39:32 = scf.for %arg5 = %c0 to %c64 step %c1 iter_args(%arg6 = %cst_0, %arg7 = %cst_0, %arg8 = %cst_0, %arg9 = %cst_0, %arg10 = %cst_0, %arg11 = %cst_0, %arg12 = %cst_0, %arg13 = %cst_0, %arg14 = %cst_0, %arg15 = %cst_0, %arg16 = %cst_0, %arg17 = %cst_0, %arg18 = %cst_0, %arg19 = %cst_0, %arg20 = %cst_0, %arg21 = %cst_0, %arg22 = %cst_0, %arg23 = %cst_0, %arg24 = %cst_0, %arg25 = %cst_0, %arg26 = %cst_0, %arg27 = %cst_0, %arg28 = %cst_0, %arg29 = %cst_0, %arg30 = %cst_0, %arg31 = %cst_0, %arg32 = %cst_0, %arg33 = %cst_0, %arg34 = %cst_0, %arg35 = %cst_0, %arg36 = %cst_0, %arg37 = %cst_0) -> (vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>, vector<4xf32>) {
+          
+          amdgpu.lds_barrier
+
+          //#map = affine_map<()[s0, s1, s2] -> (s1 * 32 + s2 * 256 + s0 floordiv 8 - ((s1 * 32 + s0 floordiv 8) floordiv 256) * 256)>
+          //#map3 = affine_map<()[s0, s1, s2] -> (s1 * 32 + s2 * 256 + s0 floordiv 8 - ((s1 * 32 + s0 floordiv 8 + 64) floordiv 256) * 256 + 64)>
+
+          // row = (s1 * 32 + s0 floordiv 8) mod 256 + s2 * 256
+          // row = (s1 * 32 + s0 floordiv 8) + s2 * 256 as s0 upperbound is 256 and s1 is 1
+          // Each instructions reads 64 rows.
+          //%2 = affine.apply #map()[%thread_id_x, %thread_id_y, %block_id_x]
+          //8192*map
+
+
+          //#map23 = affine_map<()[s0, s1] -> (s0 * 128 + s1 * 16 - (s1 floordiv 8) * 128)>
+          // (s1 mod 8) + s0 *8 --> 8*K + tid % 8
+
           %342 = affine.apply #map23()[%arg5, %thread_id_x]
           %343 = arith.addi %3, %342 overflow<nsw> : index
+          %345 = arith.addi %8, %342 overflow<nsw> : index
+          %347 = arith.addi %11, %342 overflow<nsw> : index
+          %349 = arith.addi %14, %342 overflow<nsw> : index
+          
           %344 = vector.load %4[%343] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
-          amdgpu.lds_barrier
+          %346 = vector.load %4[%345] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
+          %348 = vector.load %4[%347] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
+          %350 = vector.load %4[%349] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
 
           //%6
           // #map2 = affine_map<()[s0] -> (s0 * 16 - (s0 floordiv 8) * 128)>
@@ -149,16 +171,13 @@ module attributes {transform.with_named_sequence} {
           %store_b_col_2_swizzle_b = arith.muli %store_b_col_2_swizzle,%c16 : index 
           %store_b_col_3_swizzle_b = arith.muli %store_b_col_3_swizzle,%c16 : index 
 
+        
+
 
           vector.store %344, %alloc_1[%5, %store_b_col_0_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %345 = arith.addi %8, %342 overflow<nsw> : index
-          %346 = vector.load %4[%345] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
+          
           vector.store %346, %alloc_1[%9, %store_b_col_1_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %347 = arith.addi %11, %342 overflow<nsw> : index
-          %348 = vector.load %4[%347] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
           vector.store %348, %alloc_1[%12, %store_b_col_2_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          %349 = arith.addi %14, %342 overflow<nsw> : index
-          %350 = vector.load %4[%349] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
           vector.store %350, %alloc_1[%15, %store_b_col_3_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
 
 

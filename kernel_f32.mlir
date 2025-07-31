@@ -140,8 +140,17 @@ module attributes {transform.with_named_sequence} {
           %345 = arith.addi %8, %342 overflow<nsw> : index
           %347 = arith.addi %11, %342 overflow<nsw> : index
           %349 = arith.addi %14, %342 overflow<nsw> : index
+
+
+          %read_col = affine.apply affine_map<()[s0,s1] -> ((s1 mod 8) + s0 *8)>()[%arg5, %thread_id_x]
+          %c8 = arith.constant 8 : index
+          %read_row_mod_8 = arith.remui %2, %c8 : index
+          %read_col_swizzle = arith.xori %read_row_mod_8, %read_col : index 
+          %read_col_swizzle_b = arith.muli %read_col_swizzle,%c16 : index 
+          %read_index = arith.addi %3,%read_col_swizzle_b : index 
           
-          %344 = vector.load %4[%343] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
+          // %344 = vector.load %4[%343] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
+          %344 = vector.load %4[%read_index] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
           %346 = vector.load %4[%345] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
           %348 = vector.load %4[%347] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
           %350 = vector.load %4[%349] : memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, vector<16xi8>
@@ -174,8 +183,9 @@ module attributes {transform.with_named_sequence} {
         
 
 
-          vector.store %344, %alloc_1[%5, %store_b_col_0_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
-          
+          // vector.store %344, %alloc_1[%5, %store_b_col_0_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+          vector.store %344, %alloc_1[%5, %6] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
+
           vector.store %346, %alloc_1[%9, %store_b_col_1_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           vector.store %348, %alloc_1[%12, %store_b_col_2_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
           vector.store %350, %alloc_1[%15, %store_b_col_3_swizzle_b] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>

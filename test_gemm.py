@@ -90,7 +90,9 @@ w_t = w.T.contiguous()
 torch_out = torchScaledGemmMXFP4(x, w, x_scales, w_scales)
 # print(torch_out)
 
-with open("kernel_f32.mlir", "rb") as f:
+# filename = "kernel_f32.mlir" 
+filename = "kernel_f32_async.mlir" 
+with open(filename, "rb") as f:
     asm = f.read()
     options = WaveCompileOptions(
         backend="rocm",

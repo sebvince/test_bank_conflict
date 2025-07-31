@@ -1,4 +1,7 @@
-iree-compile kernel_f32.mlir \
+FILENAME=kernel_f32_async_ref.mlir #Reference version
+FILENAME=kernel_f32_async.mlir     #Swizzling
+
+iree-compile $FILENAME \
     --iree-hip-target=gfx950 \
     --iree-hal-target-backends=rocm \
     --mlir-disable-threading \
@@ -9,7 +12,7 @@ iree-compile kernel_f32.mlir \
 
 PROFILER="rocprofv3 --att --att-perfcounter-ctrl 3 --att-perfcounters "SQ_LDS_BANK_CONFLICT" --"
 PROFILER="rocprofv3 --pmc LDSBankConflict --output-format csv --stats --output-file res.csv -- "
-# PROFILER=
+PROFILER=
 $PROFILER iree-benchmark-module \
   --module=tmp/kernel.vmfb \
   --device=hip \
@@ -20,5 +23,3 @@ $PROFILER iree-benchmark-module \
   --input=16384x512xi8=@b_scale.bin \
   --input=16384x16384xf32=@out.bin
 
-
-# cat res.csv_counter_collection.csv 

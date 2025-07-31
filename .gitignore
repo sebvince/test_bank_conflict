@@ -4,4 +4,8 @@
 *.att
 *.out
 *.db
+*.bin
+inter
+tmp
+module*
 

@@ -91,13 +91,15 @@ torch_out = torchScaledGemmMXFP4(x, w, x_scales, w_scales)
 # print(torch_out)
 
 #filename = "kernel_f32_async_ref.mlir" 
-filename = "kernel_f32_async.mlir" 
+#filename = "kernel_f32_async.mlir" 
+filename = "kernel_f32_async_hint.mlir" 
 with open(filename, "rb") as f:
     asm = f.read()
     options = WaveCompileOptions(
         backend="rocm",
         target="gfx950",
         dump_intermediates="./inter",
+        #print_ir_after_all=True
     )
     try:
         vmfb = compile_to_vmfb(asm, options)

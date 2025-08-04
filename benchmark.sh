@@ -1,18 +1,19 @@
-FILENAME=kernel_f32_async_ref.mlir #Reference version
-FILENAME=kernel_f32_async.mlir     #Swizzling
+FILENAME=kernel_f32_async_ref.mlir  #Reference version
+FILENAME=kernel_f32_async.mlir      #Manual Swizzling
+FILENAME=kernel_f32_async_hint.mlir #IREE Swizzling
 
 iree-compile $FILENAME \
     --iree-hip-target=gfx950 \
     --iree-hal-target-backends=rocm \
     --mlir-disable-threading \
     --iree-hal-dump-executable-files-to . \
-    -o tmp/kernel.vmfb 
-    #--mlir-print-ir-after-all \
-    #--mlir-disable-threading 2> out.mlir
+    -o tmp/kernel.vmfb \
+    --mlir-print-ir-after-all \
+    --mlir-disable-threading 2> out.mlir
 
 PROFILER="rocprofv3 --att --att-perfcounter-ctrl 3 --att-perfcounters "SQ_LDS_BANK_CONFLICT" --"
 PROFILER="rocprofv3 --pmc LDSBankConflict --output-format csv --stats --output-file res.csv -- "
-PROFILER=
+#PROFILER=
 $PROFILER iree-benchmark-module \
   --module=tmp/kernel.vmfb \
   --device=hip \

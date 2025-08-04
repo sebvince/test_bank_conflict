@@ -1,4 +1,4 @@
-PROFILER="rocprofv3 --att --att-perfcounter-ctrl 3 --att-perfcounters "SQ_LDS_BANK_CONFLICT" --"
+#PROFILER="rocprofv3 --kernel-include-regex=gemm --att --att-perfcounter-ctrl 3 --att-perfcounters "SQ_LDS_BANK_CONFLICT" --"
 PROFILER="rocprofv3 --kernel-include-regex=gemm --pmc LDSBankConflict --output-format csv --stats --output-file res.csv -- "
 # PROFILER=
 rm res.csv_counter_collection.csv 

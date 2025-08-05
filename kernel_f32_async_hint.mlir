@@ -122,21 +122,21 @@ module attributes {transform.with_named_sequence} {
           amdgpu.lds_barrier
           %341 = affine.apply #map22()[%arg5, %thread_id_x]
           %342 = arith.addi %4, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %5[%342], %alloc_1[%3] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %5[%342], %alloc_1[%3,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           %343 = arith.addi %8, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %5[%343], %alloc_1[%7] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %5[%343], %alloc_1[%7,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           %344 = arith.addi %11, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %5[%344], %alloc_1[%10] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %5[%344], %alloc_1[%10,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           %345 = arith.addi %14, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %5[%345], %alloc_1[%13] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %5[%345], %alloc_1[%13,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           %346 = arith.addi %16, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %17[%346], %alloc[%3] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %17[%346], %alloc[%3,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           %347 = arith.addi %19, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %17[%347], %alloc[%7] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %17[%347], %alloc[%7,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           %348 = arith.addi %21, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %17[%348], %alloc[%10] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %17[%348], %alloc[%10,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           %349 = arith.addi %23, %341 overflow<nsw> : index
-          amdgpu.gather_to_lds %17[%349], %alloc[%13] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
+          amdgpu.gather_to_lds %17[%349], %alloc[%13,%c0] : vector<16xi8>, memref<?xi8, strided<[1], offset: ?>, #amdgpu.address_space<fat_raw_buffer>>, memref<256x128xi8, #gpu.address_space<workgroup>>
           rocdl.s.waitcnt 16368
           amdgpu.lds_barrier
           %350 = vector.load %alloc[%24, %25] : memref<256x128xi8, #gpu.address_space<workgroup>>, vector<16xi8>
